@@ -272,6 +272,7 @@ uv run main.py --transport streamable-http --tools gmail drive calendar
 | `WORKSPACE_MCP_OAUTH_PROXY_STORAGE_BACKEND` | | `memory`, `disk`, or `valkey` — see [storage backends](#oauth-proxy-storage-backends) |
 | `FASTMCP_SERVER_AUTH_GOOGLE_JWT_SIGNING_KEY` | | Custom encryption key for OAuth proxy storage; required for public OAuth 2.1 clients when `GOOGLE_OAUTH_CLIENT_SECRET` is omitted |
 | `WORKSPACE_MCP_ALLOWED_CLIENT_REDIRECT_URIS` | | Comma-separated allowlist of redirect URIs that dynamically-registered OAuth clients may use. Default is unset (any URI permitted, per DCR). Supports FastMCP's glob patterns (`*`, `*.example.com`) |
+| `WORKSPACE_MCP_GOOGLE_OAUTH_PROMPT` | | Google authorization `prompt` parameter. Defaults to `consent`; set `consent select_account` to always show Google's account chooser. |
 | **🗄️ Credential Store** | | |
 | `WORKSPACE_MCP_CREDENTIAL_STORE_BACKEND` | | `local_directory` (default) or `gcs` — see [credential store system](#credential-store-system) |
 | `WORKSPACE_MCP_CREDENTIALS_DIR` | | Directory for the `local_directory` backend |

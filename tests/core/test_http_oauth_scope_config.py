@@ -5,6 +5,20 @@ import pytest
 import core.server as server_module
 
 
+def test_google_oauth_authorize_params_preserve_default_and_allow_override(monkeypatch):
+    monkeypatch.delenv("WORKSPACE_MCP_GOOGLE_OAUTH_PROMPT", raising=False)
+    assert server_module._get_google_oauth_authorize_params() == {
+        "prompt": "consent"
+    }
+
+    monkeypatch.setenv(
+        "WORKSPACE_MCP_GOOGLE_OAUTH_PROMPT", "consent select_account"
+    )
+    assert server_module._get_google_oauth_authorize_params() == {
+        "prompt": "consent select_account"
+    }
+
+
 def test_configure_server_for_http_allows_legacy_oauth_callback(monkeypatch):
     calls = []
 
@@ -63,6 +77,7 @@ def test_configure_server_for_http_uses_protocol_auth_required_scopes(monkeypatc
             self._cimd_manager = SimpleNamespace(default_scope=default_scope)
 
     monkeypatch.setattr(server_module, "get_transport_mode", lambda: "streamable-http")
+    monkeypatch.delenv("WORKSPACE_MCP_GOOGLE_OAUTH_PROMPT", raising=False)
     monkeypatch.setattr(server_module, "GoogleProvider", FakeGoogleProvider)
     monkeypatch.setattr(
         server_module,
@@ -98,6 +113,7 @@ def test_configure_server_for_http_uses_protocol_auth_required_scopes(monkeypatc
 
     assert captured["required_scopes"] == sorted(server_module.PROTOCOL_AUTH_SCOPES)
     assert captured["valid_scopes"] == sorted(server_module.get_current_scopes())
+    assert captured["extra_authorize_params"] == {"prompt": "consent"}
     assert (
         server_module.server.auth.client_registration_options.default_scopes
         == sorted(server_module.get_current_scopes())

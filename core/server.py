@@ -325,6 +325,16 @@ def _parse_allowed_redirect_uris(value: Optional[str]) -> Optional[List[str]]:
     return uris or None
 
 
+def _get_google_oauth_authorize_params() -> dict[str, str]:
+    """Return Google authorization parameters for FastMCP's OAuth provider.
+
+    FastMCP defaults to Google's ``consent`` prompt. Preserve that default unless
+    an operator explicitly configures a different supported Google prompt value.
+    """
+    prompt = os.getenv("WORKSPACE_MCP_GOOGLE_OAUTH_PROMPT", "consent").strip()
+    return {"prompt": prompt or "consent"}
+
+
 def set_transport_mode(mode: str):
     """Sets the transport mode for the server."""
     _set_transport_mode(mode)
@@ -654,6 +664,7 @@ def configure_server_for_http():
                     client_storage=client_storage,
                     jwt_signing_key=jwt_signing_key,
                     allowed_client_redirect_uris=allowed_client_redirect_uris,
+                    extra_authorize_params=_get_google_oauth_authorize_params(),
                 )
                 if provider.client_registration_options is not None:
                     # Keep protocol-level auth limited to base identity scopes, but
